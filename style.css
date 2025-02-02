@@ -1,0 +1,163 @@
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    direction: rtl; /* النصوص من اليمين لليسار */
+    text-align: center;
+}
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid #4CAF50;
+    box-sizing: border-box;
+    text-align: right; /* النص في الجهة اليمنى */
+}
+h1, h2 {
+    color: #4CAF50;
+    font-weight: 700;
+    font-size: 2.5em; /* زيادة حجم الخط للعناوين */
+    margin-bottom: 20px;
+}
+h1 {
+    color: #FF5722; /* تغيير لون العنوان الأول */
+}
+h2 {
+    color: #009688; /* تغيير لون العنوان الثاني */
+}
+.logo img {
+    max-width: 250px;
+    transition: transform 0.3s;
+    margin-bottom: 30px;
+}
+.logo img:hover {
+    transform: scale(1.1);
+}
+.video-section {
+    margin: 20px 0;
+}
+.app-link {
+    display: block;
+    margin: 30px auto;
+    padding: 15px 25px;
+    background-color: #FF5722;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.5);
+}
+.app-link:hover {
+    background-color: #E64A19;
+    transform: scale(1.1);
+}
+.arrow-link {
+    margin-top: 20px;
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #FF5722;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+.arrow-link:hover {
+    transform: scale(1.1);
+    color: #E64A19;
+}
+.arrow {
+    font-size: 2em;
+    display: inline-block;
+    margin: 0 5px;
+    animation: moveArrow 1s infinite alternate;
+}
+.subscribe-section {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #FF9800;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    font-size: 1.5em;
+    position: relative;
+    display: inline-block;
+}
+.subscribe-section::before, .subscribe-section::after {
+    content: "→";
+    font-size: 2em;
+    color: red;
+    position: absolute;
+    animation: moveArrow 1s infinite alternate;
+}
+.subscribe-section::before {
+    left: -30px;
+}
+.subscribe-section::after {
+    right: -30px;
+}
+
+/* تأثيرات الفقرات */
+.container p {
+    padding: 20px;
+    margin: 10px 0;
+    background-color: #fff;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    font-size: 1.4em; /* زيادة حجم الخط في الفقرات */
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.container p:hover {
+    transform: scale(1.05);
+    background-color: #e0f7fa;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* إضافة تأثيرات الانزلاق */
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: slideIn 1s forwards;
+}
+
+/* تحريك السهم */
+@keyframes moveArrow {
+    from { transform: translateX(-5px); }
+    to { transform: translateX(5px); }
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    margin-top: 30px;
+}
+footer a {
+    color: #4CAF50;
+    text-decoration: none;
+    margin: 10px;
+}
+footer a:hover {
+    text-decoration: underline;
+}
