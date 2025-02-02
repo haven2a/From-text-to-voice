@@ -1,16 +1,16 @@
 {
-  "crons": [
+  "version": 2,
+  "builds": [
     {
-      "path": "/api/check-subscriptions",
-      "schedule": "0 * * * *" 
-    },
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
     {
-      "path": "/api/send-reminders",
-      "schedule": "0 9 * * *" 
-    },
-    {
-      "path": "/api/cleanup-old-data",
-      "schedule": "0 0 * * 0" 
+      "src": "/(.*)",
+      "dest": "/index.js"
     }
   ]
 }
+
