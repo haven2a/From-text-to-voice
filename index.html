@@ -80,13 +80,8 @@
             }
         }
 
-        .video-section iframe {
-            width: 100%;
-            max-width: 700px;
-            height: 400px;
+        .video-section {
             margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
         .arrow-link {
@@ -107,7 +102,6 @@
             display: block;
             margin-top: 30px;
             font-size: 1.5em;
-            color: #000;
             text-decoration: none;
             padding: 15px;
             background-color: #f4b400;
@@ -156,7 +150,10 @@
         <p class="fade-in">ترجمة كاملة لأدوات هذا التطبيق من العربية إلى الإنجليزية.</p>
 
         <div class="video-section">
-            <iframe src="video.mp4" frameborder="0" allowfullscreen></iframe>
+            <video controls width="100%" style="max-width: 700px; height: 400px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+                <source src="video.mp4" type="video/mp4">
+                متصفحك لا يدعم تشغيل الفيديو.
+            </video>
         </div>
         
         <a href="1index.html" class="arrow-link">
