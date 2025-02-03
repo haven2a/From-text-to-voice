@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node new-app.js"
+  "start": "node new-app/new-app.js"
   },
   "keywords": [],
   "author": "",
