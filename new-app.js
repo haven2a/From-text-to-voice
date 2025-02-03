@@ -1,4 +1,13 @@
 const express = require('express');
+const cors = require('cors'); // استيراد مكتبة cors
+const app = express();
+
+// استخدام cors مع التطبيق
+app.use(cors());
+
+// باقي الكود...
+
+const express = require('express');
 const app = express();
 const path = require('path');
 
