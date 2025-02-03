@@ -4,19 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل جديد</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
+
         body {
-            font-family: 'Cairo', sans-serif;
-            direction: rtl;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             height: 100vh;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
         }
 
         .register-box {
@@ -47,6 +45,25 @@
             margin-left: auto;
             margin-right: auto;
             outline: none;
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-container input {
+            width: 100%;
+        }
+
+        .password-container span {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #007bff;
         }
 
         .terms {
@@ -82,55 +99,30 @@
             background: #0056b3;
         }
 
-        /* نافذة الموافقة */
-        .modal {
+        .loader {
             display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            margin: 20px 0;
+            border: 5px solid #f3f3f3; /* Light gray */
+            border-top: 5px solid #007bff; /* Blue color */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .modal-header, .modal-footer {
-            text-align: center;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            margin: 15px 0;
-        }
-
     </style>
 </head>
 <body>
+    <header>
+        <img src="logo.png" alt="Logo" id="logo">
+    </header>
+
     <div class="register-box">
         <h2>تسجيل جديد</h2>
         <form id="registerForm" action="/subscribe" method="POST">
@@ -144,27 +136,12 @@
 
             <div class="terms">
                 <input type="checkbox" id="termsCheckbox" onchange="toggleRegisterButton()">
-                <label for="termsCheckbox">أوافق على <a href="javascript:void(0);" onclick="showModal()">شروط الاستخدام</a> و <a href="javascript:void(0);" onclick="showModal()">سياسة الخصوصية</a></label>
+                <label for="termsCheckbox">أوافق على <a href="privacy.html" target="_blank">سياسة الخصوصية</a> و <a href="terms.html" target="_blank">شروط الاستخدام</a></label>
             </div>
 
             <button id="registerButton" type="submit" disabled>تسجيل</button>
+            <div class="loader" id="loader"></div>
         </form>
-    </div>
-
-    <!-- نافذة الموافقة -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div class="modal-header">
-                <h2>شروط الاستخدام</h2>
-            </div>
-            <div class="modal-body">
-                <p>محتوى شروط الاستخدام هنا.</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()">موافق</button>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -179,26 +156,7 @@
             button.disabled = !checkbox.checked;
         }
 
-        function showModal() {
-            var modal = document.getElementById("termsModal");
-            modal.style.display = "block";
-        }
-
-        function closeModal() {
-            var modal = document.getElementById("termsModal");
-            modal.style.display = "none";
-        }
-
-        // إغلاق النافذة عند النقر خارجها
-        window.onclick = function(event) {
-            var modal = document.getElementById("termsModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        // ربط دالة التسجيل بالنموذج
-        document.getElementById("registerForm").addEventListener("submit", function(event) {
+        async function registerUser(event) {
             event.preventDefault();  // منع إرسال النموذج الافتراضي
 
             const username = document.getElementById("name").value;
@@ -210,7 +168,10 @@
                 return;
             }
 
-            console.log('البيانات المرسلة:', { name: username, email, password });
+            console.log('البيانات المرسلة:', { name: username, email, password }); // إضافة سجل لعرض البيانات المرسلة
+
+            // إظهار اللودر أثناء التسجيل
+            document.getElementById("loader").style.display = 'block';
 
             try {
                 const response = await fetch('/api/subscribe', {
@@ -221,6 +182,9 @@
 
                 const result = await response.json();
 
+                // إخفاء اللودر بعد إتمام التسجيل
+                document.getElementById("loader").style.display = 'none';
+
                 if (response.ok) {
                     alert('تم التسجيل بنجاح! تابع بريدك الإلكتروني للتعرف على صفحة تفعيل التسجيل.');
                     window.location.href = '/activate-info.html';
@@ -230,8 +194,13 @@
             } catch (error) {
                 console.error('خطأ أثناء محاولة التسجيل:', error);
                 alert('حدث خطأ، يرجى المحاولة لاحقًا.');
+                document.getElementById("loader").style.display = 'none';
             }
-        });
+        }
+
+        // ربط دالة التسجيل بالنموذج
+        document.getElementById("registerForm").addEventListener("submit", registerUser);
     </script>
+
 </body>
 </html>
