@@ -13,9 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// تحديد مسار صفحة index.html
-app.use(express.static(path.join(__dirname, 'public'))); // استخدم مجلد 'public' لخدمة الملفات الثابتة
-
 const usersFile = path.join(__dirname, 'users.json');
 
 // التأكد من أن ملف المستخدمين موجود
@@ -30,6 +27,11 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,  // استخدام البريد الإلكتروني من ملف البيئة
         pass: process.env.EMAIL_PASS    // استخدام كلمة المرور من ملف البيئة
     }
+});
+
+// مسار عرض صفحة index.html مباشرة
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html')); // أرسل ملف index.html مباشرة
 });
 
 // مسار تسجيل المستخدمين
@@ -81,43 +83,6 @@ app.post('/api/subscribe', async (req, res) => {
         console.error('❌ خطأ في تسجيل المستخدم:', error);
         res.status(500).json({ message: '❌ حدث خطأ أثناء التسجيل.' });
     }
-});
-
-// مسار تسجيل الدخول
-app.post('/api/login', async (req, res) => {
-    console.log('بيانات تسجيل الدخول:', req.body); // تسجيل البيانات المستلمة من العميل
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ message: '⚠️ البريد الإلكتروني وكلمة المرور مطلوبان!' });
-    }
-
-    try {
-        let users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-
-        const user = users.find(u => u.email === email);
-
-        if (!user) {
-            return res.status(400).json({ message: '⚠️ البريد الإلكتروني غير موجود.' });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(400).json({ message: '⚠️ كلمة المرور غير صحيحة.' });
-        }
-
-        res.status(200).json({ message: '✅ تم تسجيل الدخول بنجاح!' });
-
-    } catch (error) {
-        console.error('❌ خطأ في تسجيل الدخول:', error);
-        res.status(500).json({ message: '❌ حدث خطأ أثناء تسجيل الدخول.' });
-    }
-});
-
-// المسار الذي يعرض صفحة index.html كصفحة رئيسية
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); // أرسل ملف index.html
 });
 
 // تشغيل السيرفر
