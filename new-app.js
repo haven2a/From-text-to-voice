@@ -40,11 +40,16 @@ app.post('/api/subscribe', async (req, res) => {
 
   try {
     // التحقق مما إذا كان البريد الإلكتروني مسجل مسبقًا
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: userCheckError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email)
       .single();
+
+    if (userCheckError) {
+      console.error('❌ خطأ في التحقق من البريد الإلكتروني:', userCheckError);
+      return res.status(500).json({ message: '❌ حدث خطأ أثناء التحقق من البريد الإلكتروني.' });
+    }
 
     if (existingUser) {
       return res.status(400).json({ message: '⚠️ البريد الإلكتروني مسجل مسبقًا.' });
@@ -59,7 +64,8 @@ app.post('/api/subscribe', async (req, res) => {
       .insert([{ name, email, password: hashedPassword }]);
 
     if (insertError) {
-      throw insertError;
+      console.error('❌ خطأ في إضافة المستخدم:', insertError);
+      return res.status(500).json({ message: '❌ حدث خطأ أثناء إضافة المستخدم.' });
     }
 
     // إعداد خيارات البريد الإلكتروني للتأكيد
@@ -79,6 +85,7 @@ app.post('/api/subscribe', async (req, res) => {
       }
     });
 
+    // إرسال استجابة ناجحة
     res.status(201).json({ message: '✅ تم التسجيل بنجاح وتم إرسال بريد التأكيد!' });
   } catch (error) {
     console.error('❌ خطأ في تسجيل المستخدم:', error);
