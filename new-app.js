@@ -29,9 +29,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// مسار عرض صفحة index.html مباشرة
+// مسار الصفحة الرئيسية لعرض index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html')); // أرسل ملف index.html مباشرة
+    res.sendFile(path.join(__dirname, 'index.html'));  // تأكد من أن index.html في نفس المجلد
 });
 
 // مسار تسجيل المستخدمين
