@@ -1,4 +1,10 @@
+# تجاهل ملفات البيئة
+.env
+
+# تجاهل مجلدات Vercel (إذا كنت تستخدم Vercel)
 api/.vercel/
 
-touch .gitignore
-.env
+# يمكنك إضافة المزيد من الملفات أو المجلدات التي تريد تجاهلها هنا
+node_modules/
+dist/
+build/
