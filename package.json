@@ -1,7 +1,10 @@
 {
+  "name": "from-text-to-voice",
+  "version": "1.0.0",
   "scripts": {
-  "start": "node new-app/new-app.js"
-  },
+    "start": "node new-app.js"
+  }
+}
   "keywords": [],
   "author": "",
   "license": "ISC",
