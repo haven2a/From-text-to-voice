@@ -1,3 +1,4 @@
 api/.vercel/
 
 touch .gitignore
+.env
