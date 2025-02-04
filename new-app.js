@@ -1,10 +1,17 @@
 require('dotenv').config();
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const admin = require('firebase-admin');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+
+// تهيئة Firebase باستخدام مفاتيح الخدمة
+const serviceAccount = require('./firebase-key.json');  // تأكد من إضافة هذا الملف إلى .gitignore
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,30 +20,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const usersFile = path.join(__dirname, 'users.json');
-
-// التأكد من أن ملف المستخدمين موجود
-if (!fs.existsSync(usersFile)) {
-    fs.writeFileSync(usersFile, JSON.stringify([], null, 2));
-}
-
 // إعداد خدمة البريد الإلكتروني
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER,  // استخدام البريد الإلكتروني من ملف البيئة
-        pass: process.env.EMAIL_PASS    // استخدام كلمة المرور من ملف البيئة
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
-// مسار الصفحة الرئيسية لعرض index.html
+// مسار الصفحة الرئيسية
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));  // تأكد من أن index.html في نفس المجلد
+    res.sendFile(path.join(__dirname, 'index.html'));  // تأكد من أن index.html موجود
 });
 
 // مسار تسجيل المستخدمين
 app.post('/api/subscribe', async (req, res) => {
-    console.log('بيانات التسجيل:', req.body); // تسجيل البيانات المستلمة من العميل
+    console.log('بيانات التسجيل:', req.body);
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -49,21 +49,30 @@ app.post('/api/subscribe', async (req, res) => {
     }
 
     try {
-        let users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        // التحقق من وجود البريد الإلكتروني مسبقًا
+        const usersRef = db.collection('users');
+        const snapshot = await usersRef.where('email', '==', email).get();
 
-        if (users.some(user => user.email === email)) {
+        if (!snapshot.empty) {
             return res.status(400).json({ message: '⚠️ البريد الإلكتروني مسجل مسبقًا.' });
         }
 
+        // تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = { name, email, password: hashedPassword, registeredAt: new Date().toISOString() };
-        users.push(newUser);
+        // إضافة المستخدم إلى Firestore
+        const newUser = {
+            name,
+            email,
+            password: hashedPassword,
+            registeredAt: admin.firestore.FieldValue.serverTimestamp()
+        };
 
-        fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+        await usersRef.add(newUser);
 
+        // إرسال بريد التأكيد
         const mailOptions = {
-            from: process.env.EMAIL_USER,  // استخدام البريد الإلكتروني من ملف البيئة
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'تم التسجيل بنجاح',
             text: `مرحبًا ${name}،\n\nلقد تم تسجيلك بنجاح في النظام. شكرًا لاستخدامك خدمتنا!`
