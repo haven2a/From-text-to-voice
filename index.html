@@ -9,8 +9,8 @@
         body {
             font-family: 'Cairo', sans-serif;
             direction: rtl;
-            background-color: #282c34;
-            color: #ffffff;
+            background-color: #282c34; /* لون خلفية داكن لإبراز العناصر */
+            color: #ffffff; /* لون نص واضح */
             margin: 0;
             padding: 0;
             display: flex;
@@ -31,7 +31,7 @@
         }
 
         .logo img {
-            width: 150px;
+            width: 150px; /* حجم متوسط للوجو */
         }
 
         @keyframes moveSideways {
@@ -39,14 +39,14 @@
                 transform: translateX(0);
             }
             100% {
-                transform: translateX(50px);
+                transform: translateX(50px); /* يتحرك 50 بكسل إلى اليمين */
             }
         }
 
         h1, h2, p {
             margin: 20px 0;
             padding: 15px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1); /* خلفية شفافة قليلاً */
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             font-weight: 700;
@@ -56,7 +56,7 @@
 
         h1 {
             font-size: 3em;
-            color: #f4b400;
+            color: #f4b400; /* لون النص بارز */
             animation-delay: 0.2s;
         }
 
@@ -85,8 +85,8 @@
 
         .video-section video {
             width: 100%;
-            max-width: 1280px;
-            height: 720px;
+            max-width: 1080px;  /* تغيير الحجم إلى 1080px */
+            height: 720px;  /* الحفاظ على ارتفاع 720px */
             margin-top: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -158,7 +158,6 @@
         <p class="fade-in">يمكن تسريع الصوت أو تبطئته.</p>
         <p class="fade-in">ترجمة كاملة لأدوات هذا التطبيق من العربية إلى الإنجليزية.</p>
 
-        <!-- إضافة عنصر الفيديو بشكل صحيح -->
         <div class="video-section">
             <video controls>
                 <source src="video.mp4" type="video/mp4">
