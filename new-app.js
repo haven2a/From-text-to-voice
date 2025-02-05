@@ -111,16 +111,23 @@ app.post('/api/subscribe', async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error('❌ خطأ في إرسال البريد:', error);
+        // إرسال استجابة للمستخدم في حالة فشل إرسال البريد الإلكتروني
+        return res.status(500).json({ message: '❌ حدث خطأ أثناء إرسال بريد التأكيد.' });
       } else {
         console.log('✅ تم إرسال البريد:', info.response);
+        res.status(201).json({ message: '✅ تم التسجيل بنجاح وتم إرسال بريد التأكيد!' });
       }
     });
 
-    res.status(201).json({ message: '✅ تم التسجيل بنجاح وتم إرسال بريد التأكيد!' });
   } catch (error) {
-    console.error("❌ خطأ أثناء التسجيل:", error);
+    console.error("❌ خطأ أثناء التسجيل:", error.message);
     res.status(500).json({ message: '❌ حدث خطأ أثناء التسجيل.', error: error.message });
   }
+});
+
+// التعامل مع المسارات غير الموجودة (خطأ 404)
+app.use((req, res, next) => {
+  res.status(404).send("عذرًا، الصفحة غير موجودة!");
 });
 
 // تشغيل الخادم
