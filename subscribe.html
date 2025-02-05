@@ -17,7 +17,7 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        .register-box {
+        .SUBSCRIBE-box {
             background: white;
             padding: 40px;
             border-radius: 10px;
@@ -27,13 +27,13 @@
             border: 5px solid #007bff;
         }
 
-        .register-box h2 {
+        .SUBSCRIBE-box h2 {
             font-size: 32px;
             margin-bottom: 20px;
             color: #333;
         }
 
-        .register-box input {
+        .SUBSCRIBE-box input {
             width: calc(100% - 22px);
             padding: 10px;
             margin: 10px 0;
@@ -79,7 +79,7 @@
             height: 20px;
         }
 
-        .register-box button {
+        .SUBSCRIBE-box button {
             background: #007bff;
             color: white;
             padding: 12px;
@@ -90,12 +90,12 @@
             border-radius: 5px;
         }
 
-        .register-box button:disabled {
+        .SUBSCRIBE-box button:disabled {
             background: #cccccc;
             cursor: not-allowed;
         }
 
-        .register-box button:hover:not(:disabled) {
+        .SUBSCRIBE-box button:hover:not(:disabled) {
             background: #0056b3;
         }
 
@@ -123,9 +123,9 @@
         <img src="logo.png" alt="Logo" id="logo">
     </header>
 
-    <div class="register-box">
+    <div class="SUBSCRIBE-box">
         <h2>تسجيل جديد</h2>
-        <form id="registerForm" action="/api/subscribe" method="POST">
+        <form id="SUBSCRIBEForm" action="/api/subscribe" method="POST">
             <input type="text" placeholder="الاسم الكامل" id="name" required autocomplete="off">
             <input type="email" placeholder="البريد الإلكتروني" id="email" required autocomplete="off">
             
@@ -135,11 +135,11 @@
             </div>
 
             <div class="terms">
-                <input type="checkbox" id="termsCheckbox" onchange="toggleRegisterButton()">
+                <input type="checkbox" id="termsCheckbox" onchange="toggleSUBSCRIBEButton()">
                 <label for="termsCheckbox">أوافق على <a href="privacy.html" target="_blank">سياسة الخصوصية</a> و <a href="terms.html" target="_blank">شروط الاستخدام</a></label>
             </div>
 
-            <button id="registerButton" type="submit" disabled>تسجيل</button>
+            <button id="SUBSCRIBEButton" type="submit" disabled>تسجيل</button>
             <div class="loader" id="loader"></div>
         </form>
     </div>
@@ -150,13 +150,13 @@
             passwordField.type = passwordField.type === "password" ? "text" : "password";
         }
 
-        function toggleRegisterButton() {
+        function toggleSUBSCRIBEButton() {
             var checkbox = document.getElementById("termsCheckbox");
-            var button = document.getElementById("registerButton");
+            var button = document.getElementById("SUBSCRIBEButton");
             button.disabled = !checkbox.checked;
         }
 
-        async function registerUser(event) {
+        async function SUBSCRIBEUser(event) {
             event.preventDefault();
 
             const username = document.getElementById("name").value;
@@ -196,7 +196,7 @@
             }
         }
 
-        document.getElementById("registerForm").addEventListener("submit", registerUser);
+        document.getElementById("SUBSCRIBEForm").addEventListener("submit", SUBSCRIBEUser);
     </script>
 </body>
 </html>
