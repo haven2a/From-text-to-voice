@@ -125,7 +125,7 @@
 
   <div class="SUBSCRIBE-box">
     <h2>تسجيل جديد</h2>
-    <!-- تغيير action إلى /subscribe لتطابق عنوان السيرفر -->
+    <!-- تأكد من إضافة خاصية name لكل حقل لإرسال البيانات بشكل صحيح -->
     <form id="SUBSCRIBEForm" action="/subscribe" method="POST">
       <input type="text" placeholder="الاسم الكامل" id="name" name="name" required autocomplete="off">
       <input type="email" placeholder="البريد الإلكتروني" id="email" name="email" required autocomplete="off">
@@ -171,6 +171,67 @@
     form.addEventListener('submit', function(event) {
       event.preventDefault(); // منع الإرسال الافتراضي للنموذج
 
-      // تعطيل الزر أثناء الإ
+      // تعطيل الزر أثناء الإرسال
+      subscribeButton.disabled = true;
+      subscribeButton.textContent = 'جارٍ الاشتراك...';
 
-                          
+      // الحصول على البيانات من الحقول
+      const name = document.getElementById("name").value;
+      const email = emailInput.value;
+      const password = document.getElementById("password").value;
+
+      // التحقق من صحة البيانات الأساسية
+      if (!name || !email || !password) {
+        alert('الرجاء ملء جميع الحقول!');
+        subscribeButton.disabled = false;
+        subscribeButton.textContent = 'تسجيل';
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        alert('البريد الإلكتروني غير صالح.');
+        subscribeButton.disabled = false;
+        subscribeButton.textContent = 'تسجيل';
+        return;
+      }
+
+      console.log('البيانات المرسلة:', { name, email, password });
+
+      // عرض المؤشر أثناء الإرسال
+      document.getElementById("loader").style.display = 'block';
+
+      // استخدام URLSearchParams لإرسال البيانات بتنسيق URL-encoded
+      const formData = new URLSearchParams();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+
+      // إرسال البيانات إلى الخادم باستخدام المسار /subscribe
+      fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData.toString()
+      })
+      .then(response => response.text())  // نتوقع استجابة نصية
+      .then(data => {
+        document.getElementById("loader").style.display = 'none';
+        alert('تم الاشتراك بنجاح!');
+        // إعادة تفعيل الزر وإعادة النص
+        subscribeButton.disabled = false;
+        subscribeButton.textContent = 'تسجيل';
+        // إعادة التوجيه إلى صفحة المعلومات بعد الاشتراك الناجح
+        window.location.href = '/activate-info.html';
+      })
+      .catch(error => {
+        console.error('حدث خطأ:', error);
+        alert('حدث خطأ أثناء الاشتراك.');
+        subscribeButton.disabled = false;
+        subscribeButton.textContent = 'تسجيل';
+        document.getElementById("loader").style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
