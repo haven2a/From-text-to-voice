@@ -1,189 +1,191 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>from-text-to-voice</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            direction: rtl;
-            background-color: #282c34; /* لون خلفية داكن لإبراز العناصر */
-            color: #ffffff; /* لون نص واضح */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8">
+  <!-- إضافة CSP عبر Meta tag للسماح بتحميل الأنماط والخطوط من Google -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>from-text-to-voice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      background-color: #282c34; /* لون خلفية داكن لإبراز العناصر */
+      color: #ffffff; /* لون نص واضح */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .container {
-            width: 80%;
-            text-align: center;
-            margin-bottom: 50px;
-        }
+    .container {
+      width: 80%;
+      text-align: center;
+      margin-bottom: 50px;
+    }
 
-        .logo {
-            margin-top: 20px;
-            animation: moveSideways 2s infinite alternate ease-in-out;
-        }
+    .logo {
+      margin-top: 20px;
+      animation: moveSideways 2s infinite alternate ease-in-out;
+    }
 
-        .logo img {
-            width: 150px; /* حجم متوسط للوجو */
-        }
+    .logo img {
+      width: 150px; /* حجم متوسط للوجو */
+    }
 
-        @keyframes moveSideways {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(50px); /* يتحرك 50 بكسل إلى اليمين */
-            }
-        }
+    @keyframes moveSideways {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(50px); /* يتحرك 50 بكسل إلى اليمين */
+      }
+    }
 
-        h1, h2, p {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.1); /* خلفية شفافة قليلاً */
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            font-weight: 700;
-            opacity: 0;
-            animation: slideIn 1s forwards ease-out;
-        }
+    h1, h2, p {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.1); /* خلفية شفافة قليلاً */
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      font-weight: 700;
+      opacity: 0;
+      animation: slideIn 1s forwards ease-out;
+    }
 
-        h1 {
-            font-size: 3em;
-            color: #f4b400; /* لون النص بارز */
-            animation-delay: 0.2s;
-        }
+    h1 {
+      font-size: 3em;
+      color: #f4b400; /* لون النص بارز */
+      animation-delay: 0.2s;
+    }
 
-        h2 {
-            font-size: 2em;
-            color: #34a853;
-            animation-delay: 0.4s;
-        }
+    h2 {
+      font-size: 2em;
+      color: #34a853;
+      animation-delay: 0.4s;
+    }
 
-        p {
-            font-size: 1.2em;
-            color: #e8eaed;
-            animation-delay: 0.6s;
-        }
+    p {
+      font-size: 1.2em;
+      color: #e8eaed;
+      animation-delay: 0.6s;
+    }
 
-        @keyframes slideIn {
-            0% {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+    @keyframes slideIn {
+      0% {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
 
-        .video-section video {
-            width: 100%;
-            max-width: 1080px;  /* تغيير الحجم إلى 1080px */
-            height: 720px;  /* الحفاظ على ارتفاع 720px */
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
+    .video-section video {
+      width: 100%;
+      max-width: 1080px;  /* تغيير الحجم إلى 1080px */
+      height: 720px;  /* الحفاظ على ارتفاع 720px */
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        .arrow-link {
-            display: inline-block;
-            font-size: 1.5em;
-            color: #0d6efd;
-            margin-top: 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    .arrow-link {
+      display: inline-block;
+      font-size: 1.5em;
+      color: #0d6efd;
+      margin-top: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-        .arrow {
-            font-size: 2em;
-            color: #f4b400;
-        }
+    .arrow {
+      font-size: 2em;
+      color: #f4b400;
+    }
 
-        .subscribe-section a {
-            display: block;
-            margin-top: 30px;
-            font-size: 1.5em;
-            color: #000;
-            text-decoration: none;
-            padding: 15px;
-            background-color: #f4b400;
-            border-radius: 10px;
-            color: white;
-        }
+    .subscribe-section a {
+      display: block;
+      margin-top: 30px;
+      font-size: 1.5em;
+      color: #000;
+      text-decoration: none;
+      padding: 15px;
+      background-color: #f4b400;
+      border-radius: 10px;
+      color: white;
+    }
 
-        footer {
-            margin-top: auto;
-            background-color: #20232a;
-            color: #61dafb;
-            padding: 20px 0;
-            width: 100%;
-            text-align: center;
-        }
+    footer {
+      margin-top: auto;
+      background-color: #20232a;
+      color: #61dafb;
+      padding: 20px 0;
+      width: 100%;
+      text-align: center;
+    }
 
-        footer a {
-            color: #61dafb;
-            margin: 0 15px;
-            font-size: 1em;
-            text-decoration: none;
-        }
+    footer a {
+      color: #61dafb;
+      margin: 0 15px;
+      font-size: 1em;
+      text-decoration: none;
+    }
 
-        footer p {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
+    footer p {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
 
-        footer a:hover {
-            color: #f4b400;
-        }
-    </style>
+    footer a:hover {
+      color: #f4b400;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="logo.png" alt="From Text to Voice Logo">
-        </div>
-
-        <h1 class="fade-in">من نص إلى صوت</h1>
-        <h2 class="fade-in">مميزات التطبيق:</h2>
-
-        <p class="fade-in">يدعم اللغة العربية والإنجليزية.</p>
-        <p class="fade-in">يوفر خيار صوت ذكر وصوت أنثى.</p>
-        <p class="fade-in">يمكن تسريع الصوت أو تبطئته.</p>
-        <p class="fade-in">ترجمة كاملة لأدوات هذا التطبيق من العربية إلى الإنجليزية.</p>
-
-        <div class="video-section">
-            <video controls>
-                <source src="video.mp4" type="video/mp4">
-                متصفحك لا يدعم تشغيل الفيديو.
-            </video>
-        </div>
-
-        <a href="1index.html" class="arrow-link">
-            صفحة التطبيق
-            <span class="arrow">➡️</span>
-            <span class="arrow">➡️</span>
-        </a>
-
-        <div class="subscribe-section">
-            <a href="subscribe.html">نعم، أريد الاشتراك في هذا التطبيق!</a>
-        </div>
+  <div class="container">
+    <div class="logo">
+      <img src="logo.png" alt="From Text to Voice Logo">
     </div>
 
-    <footer>
-        <p>روابط مهمة:</p>
-        <a href="about.html" target="_blank">من نحن</a>
-        <a href="contact.html" target="_blank">اتصل بنا</a>
-        <a href="support.html" target="_blank">الدعم الفني</a>
-        <a href="support_messages.html" target="_blank">رسائل العملاء</a>
-        <a href="privacy.html" target="_blank">سياسة الخصوصية</a>
-        <a href="terms.html" target="_blank">الشروط والأحكام</a>
-    </footer>
+    <h1 class="fade-in">من نص إلى صوت</h1>
+    <h2 class="fade-in">مميزات التطبيق:</h2>
+
+    <p class="fade-in">يدعم اللغة العربية والإنجليزية.</p>
+    <p class="fade-in">يوفر خيار صوت ذكر وصوت أنثى.</p>
+    <p class="fade-in">يمكن تسريع الصوت أو تبطئته.</p>
+    <p class="fade-in">ترجمة كاملة لأدوات هذا التطبيق من العربية إلى الإنجليزية.</p>
+
+    <div class="video-section">
+      <video controls>
+        <source src="video.mp4" type="video/mp4">
+        متصفحك لا يدعم تشغيل الفيديو.
+      </video>
+    </div>
+
+    <a href="1index.html" class="arrow-link">
+      صفحة التطبيق
+      <span class="arrow">➡️</span>
+      <span class="arrow">➡️</span>
+    </a>
+
+    <div class="subscribe-section">
+      <a href="subscribe.html">نعم، أريد الاشتراك في هذا التطبيق!</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>روابط مهمة:</p>
+    <a href="about.html" target="_blank">من نحن</a>
+    <a href="contact.html" target="_blank">اتصل بنا</a>
+    <a href="support.html" target="_blank">الدعم الفني</a>
+    <a href="support_messages.html" target="_blank">رسائل العملاء</a>
+    <a href="privacy.html" target="_blank">سياسة الخصوصية</a>
+    <a href="terms.html" target="_blank">الشروط والأحكام</a>
+  </footer>
 </body>
 </html>
