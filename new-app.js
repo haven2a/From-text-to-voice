@@ -4,22 +4,14 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const admin = require('firebase-admin');
+const { createClient } = require('@supabase/supabase-js');
 
-// تحميل مفتاح Firebase
-console.log("🚀 تحميل مفتاح Firebase...");
-try {
-    const serviceAccount = require('./firebase-key.json');
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
-    console.log("✅ Firebase تم الاتصال به بنجاح!");
-} catch (error) {
-    console.error("❌ خطأ في تحميل Firebase:", error);
-    process.exit(1); // إنهاء السيرفر إذا لم يتم تحميل Firebase بشكل صحيح
-}
+// إعداد الاتصال بـ Supabase
+const supabase = createClient(
+    process.env.SUPABASE_URL,  // من .env
+    process.env.SUPABASE_KEY   // من .env
+);
 
-const db = admin.firestore();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -60,11 +52,17 @@ app.post('/api/subscribe', async (req, res) => {
     }
 
     try {
-        console.log("🔍 البحث عن البريد الإلكتروني في Firestore...");
-        const usersRef = db.collection('users');
-        const snapshot = await usersRef.where('email', '==', email).get();
+        console.log("🔍 البحث عن البريد الإلكتروني في Supabase...");
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email);
 
-        if (!snapshot.empty) {
+        if (error) {
+            throw error;
+        }
+
+        if (data.length > 0) {
             console.log("⚠️ البريد الإلكتروني مسجل مسبقًا!");
             return res.status(400).json({ message: '⚠️ البريد الإلكتروني مسجل مسبقًا.' });
         }
@@ -72,15 +70,22 @@ app.post('/api/subscribe', async (req, res) => {
         console.log("🔑 تشفير كلمة المرور...");
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        console.log("📦 حفظ المستخدم في Firestore...");
-        const newUser = {
-            name,
-            email,
-            password: hashedPassword,
-            registeredAt: admin.firestore.FieldValue.serverTimestamp()
-        };
+        console.log("📦 حفظ المستخدم في Supabase...");
+        const { error: insertError } = await supabase
+            .from('users')
+            .insert([
+                {
+                    name,
+                    email,
+                    password: hashedPassword,
+                    registered_at: new Date()
+                }
+            ]);
 
-        await usersRef.add(newUser);
+        if (insertError) {
+            throw insertError;
+        }
+
         console.log("✅ تم حفظ المستخدم بنجاح!");
 
         console.log("📨 إرسال بريد التأكيد...");
