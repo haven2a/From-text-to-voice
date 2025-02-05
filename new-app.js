@@ -41,6 +41,7 @@ console.log("✅ تم إعداد خدمة البريد الإلكتروني!");
 
 // المسار الرئيسي: تأكد من وجود ملف index.html في نفس المجلد
 app.get('/', (req, res) => {
+  console.log("وصلت إلى الصفحة الرئيسية");
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
