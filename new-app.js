@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
@@ -8,8 +9,8 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// إعداد الاتصال بـ Supabase
-const supabase = createClient('https://your-project-url.supabase.co', 'your-anon-key');
+// إعداد Supabase باستخدام البيانات من .env
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -60,45 +61,38 @@ app.post('/subscribe', async (req, res) => {
     return res.status(400).json({ message: '⚠️ البريد الإلكتروني غير صحيح.' });
   }
 
-  try {
-    console.log("🔑 تسجيل المستخدم باستخدام Supabase...");
-    // تسجيل المستخدم باستخدام Supabase Authentication
-    const { user, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+  console.log("🔑 تشفير كلمة المرور...");
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (error) {
-      console.log("⚠️ خطأ في التسجيل:", error.message);
-      return res.status(400).json({ message: `⚠️ ${error.message}` });
-    }
+  // إضافة المستخدم إلى Supabase
+  const { data, error } = await supabase
+    .from('users') // اسم الجدول في Supabase
+    .insert([{ name, email, password: hashedPassword }]);
 
-    console.log("✅ تم التسجيل بنجاح!");
-    
-    // إرسال بريد إلكتروني للمستخدم عند نجاح التسجيل
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'تم التسجيل بنجاح!',
-      text: `مرحبًا ${name}،\n\nلقد تم تسجيلك بنجاح في التطبيق. شكرًا لاستخدامك خدمتنا!`
-    };
-
-    // إرسال البريد الإلكتروني
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("⚠️ فشل إرسال البريد الإلكتروني:", error);
-      } else {
-        console.log("✅ تم إرسال البريد الإلكتروني بنجاح:", info.response);
-      }
-    });
-
-    res.status(200).json({ message: '✅ تم التسجيل بنجاح!' });
-  } catch (err) {
-    console.log("⚠️ حدث خطأ غير متوقع:", err.message);
-    res.status(500).json({ message: '⚠️ حدث خطأ في الخادم!' });
+  if (error) {
+    console.log("⚠️ حدث خطأ أثناء التسجيل:", error.message);
+    return res.status(400).json({ message: `⚠️ حدث خطأ: ${error.message}` });
   }
+
+  console.log("✅ تم التسجيل بنجاح!");
+  res.status(200).json({ message: '✅ تم التسجيل بنجاح!' });
 });
 
+// عرض جميع المستخدمين من Supabase
+app.get('/users', async (req, res) => {
+  const { data, error } = await supabase
+    .from('users') // اسم الجدول في Supabase
+    .select('*'); // جلب جميع الأعمدة
+
+  if (error) {
+    console.log("⚠️ حدث خطأ أثناء جلب البيانات:", error.message);
+    return res.status(400).json({ message: `⚠️ حدث خطأ: ${error.message}` });
+  }
+
+  return res.status(200).json(data);
+});
+
+// بدء الخادم
 app.listen(PORT, () => {
   console.log(`🚀 السيرفر يعمل على http://localhost:${PORT}`);
 });
