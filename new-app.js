@@ -83,3 +83,44 @@ app.post('/api/subscribe', async (req, res) => {
     }
 
     console.log("🔑 تشفير كلمة المرور...");
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // إدخال المستخدم في قاعدة البيانات
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert([
+        {
+          name,
+          email,
+          password: hashedPassword,
+        }
+      ]);
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    console.log("✅ تم تسجيل المستخدم بنجاح!");
+
+    // إرسال بريد إلكتروني تأكيد
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'تأكيد التسجيل',
+      text: `مرحبًا ${name}, تم تسجيلك بنجاح في تطبيقنا!`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("📧 تم إرسال البريد الإلكتروني!");
+
+    res.status(200).json({ message: 'تم التسجيل بنجاح!' });
+  } catch (error) {
+    console.error("⚠️ حدث خطأ أثناء التسجيل:", error.message);
+    res.status(500).json({ message: 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.' });
+  }
+});
+
+// تشغيل الخادم
+app.listen(PORT, () => {
+  console.log(`🚀 الخادم يعمل على المنفذ ${PORT}`);
+});
