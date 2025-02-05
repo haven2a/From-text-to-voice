@@ -1,167 +1,176 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل جديد</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            margin: 0;
-            font-family: 'Cairo', sans-serif;
-        }
-        .register-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 400px;
-            border: 5px solid #007bff;
-        }
-        .register-box h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .register-box input {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 2px solid #007bff;
-            border-radius: 5px;
-            font-size: 18px;
-            text-align: center;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            outline: none;
-        }
-        .password-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .password-container input {
-            width: 100%;
-        }
-        .password-container span {
-            position: absolute;
-            right: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            color: #007bff;
-        }
-        .terms {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        .terms input {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-        }
-        .register-box button {
-            background: #007bff;
-            color: white;
-            padding: 12px;
-            border: none;
-            width: 100%;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .register-box button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-        .register-box button:hover:not(:disabled) {
-            background: #0056b3;
-        }
-        .logo {
-            width: 100px;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل جديد</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .SUBSCRIBE-box {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 400px;
+      border: 5px solid #007bff;
+    }
+
+    .SUBSCRIBE-box h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .SUBSCRIBE-box input {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #007bff;
+      border-radius: 5px;
+      font-size: 18px;
+      text-align: center;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      outline: none;
+    }
+
+    .password-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-container input {
+      width: 100%;
+    }
+
+    .password-container span {
+      position: absolute;
+      right: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #007bff;
+    }
+
+    .terms {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .terms input {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .SUBSCRIBE-box button {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .SUBSCRIBE-box button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .SUBSCRIBE-box button:hover:not(:disabled) {
+      background: #0056b3;
+    }
+
+    .loader {
+      display: none;
+      margin: 20px 0;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div class="register-box">
-        <!-- الشعار -->
-        <img src="logo.png" alt="Logo" class="logo">
+  <header>
+    <img src="logo.png" alt="Logo" id="logo">
+  </header>
 
-        <h2>تسجيل جديد</h2>
-        
-        <form id="subscribeForm">
-            <input type="text" placeholder="الاسم الكامل" id="name" required autocomplete="off">
-            <input type="email" placeholder="البريد الإلكتروني" id="email" required autocomplete="off">
-            
-            <div class="password-container">
-                <input type="password" placeholder="كلمة المرور" id="password" required autocomplete="off">
-                <span onclick="togglePassword()">👁️</span>
-            </div>
-            
-            <div class="terms">
-                <input type="checkbox" id="termsCheckbox" onchange="toggleSubscribeButton()">
-                <label for="termsCheckbox">أوافق على <a href="privacy.html">سياسة الخصوصية</a> و <a href="terms.html">شروط الاستخدام</a></label>
-            </div>
+  <div class="SUBSCRIBE-box">
+    <h2>تسجيل جديد</h2>
+    <!-- تغيير action إلى /subscribe لتطابق عنوان السيرفر -->
+    <form id="SUBSCRIBEForm" action="/subscribe" method="POST">
+      <input type="text" placeholder="الاسم الكامل" id="name" name="name" required autocomplete="off">
+      <input type="email" placeholder="البريد الإلكتروني" id="email" name="email" required autocomplete="off">
+      
+      <div class="password-container">
+        <input type="password" placeholder="كلمة المرور" id="password" name="password" required autocomplete="off">
+        <span onclick="togglePassword()">👁️</span>
+      </div>
 
-            <button id="subscribeButton" disabled onclick="subscribe(event)">تسجيل</button>
-        </form>
-    </div>
+      <div class="terms">
+        <input type="checkbox" id="termsCheckbox" onchange="toggleSUBSCRIBEButton()">
+        <label for="termsCheckbox">أوافق على <a href="privacy.html" target="_blank">سياسة الخصوصية</a> و <a href="terms.html" target="_blank">شروط الاستخدام</a></label>
+      </div>
 
-    <script>
-        function togglePassword() {
-            var passwordField = document.getElementById("password");
-            passwordField.type = passwordField.type === "password" ? "text" : "password";
-        }
+      <button id="SUBSCRIBEButton" type="submit" disabled>تسجيل</button>
+      <div class="loader" id="loader"></div>
+    </form>
+  </div>
 
-        function toggleSubscribeButton() {
-            var checkbox = document.getElementById("termsCheckbox");
-            var button = document.getElementById("subscribeButton");
-            button.disabled = !checkbox.checked;
-        }
+  <script>
+    // المتغيرات الأساسية
+    const form = document.getElementById("SUBSCRIBEForm");
+    const subscribeButton = document.getElementById("SUBSCRIBEButton");
+    const emailInput = document.getElementById("email");
 
-        async function subscribe(event) {
-            event.preventDefault();  // Prevent the default form submission
+    function togglePassword() {
+      const passwordField = document.getElementById("password");
+      passwordField.type = passwordField.type === "password" ? "text" : "password";
+    }
 
-            const username = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+    function toggleSUBSCRIBEButton() {
+      const checkbox = document.getElementById("termsCheckbox");
+      subscribeButton.disabled = !checkbox.checked;
+    }
 
-            if (!username || !email || !password) {
-                alert('الرجاء ملء جميع الحقول!');
-                return;
-            }
+    // دالة التحقق من صحة البريد الإلكتروني
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
 
-            try {
-                const response = await fetch('/api/subscribe', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: username, email, password })
-                });
+    // مستمع الحدث عند تقديم النموذج
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // منع الإرسال الافتراضي للنموذج
 
-                const result = await response.json();
+      // تعطيل الزر أثناء الإ
 
-                if (response.ok) {
-                    alert('تم التسجيل بنجاح! تابع بريدك الإلكتروني للتأكد من التفعيل.');
-                    window.location.href = '/activate-info.html';
-                } else {
-                    alert(result.message);
-                }
-            } catch (error) {
-                console.error('خطأ أثناء محاولة التسجيل:', error);
-                alert('حدث خطأ، يرجى المحاولة لاحقًا.');
-            }
-        }
-    </script>
-</body>
-</html>
+                          
