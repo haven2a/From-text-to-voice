@@ -1,93 +1,54 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const form = document.getElementById("SUBSCRIBEForm");
-  const subscribeButton = document.getElementById("SUBSCRIBEButton");
-  const emailInput = document.getElementById("email");
+document.addEventListener("DOMContentLoaded", () => {
+    const subscribeButton = document.getElementById('subscribeButton');
+    const emailInput = document.getElementById('emailInput');
 
-  // دالة لتبديل إظهار/إخفاء كلمة المرور
-  function togglePassword() {
-    const passwordField = document.getElementById("password");
-    passwordField.type = passwordField.type === "password" ? "text" : "password";
-  }
+    // إضافة مستمع الحدث عند تقديم النموذج
+    const form = document.getElementById('subscribeForm');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // منع الإرسال الافتراضي للنموذج
 
-  // دالة لتمكين أو تعطيل زر التسجيل بناءً على حالة مربع الشروط
-  function toggleSUBSCRIBEButton() {
-    const checkbox = document.getElementById("termsCheckbox");
-    subscribeButton.disabled = !checkbox.checked;
-  }
+        // تعطيل الزر أثناء الإرسال
+        subscribeButton.disabled = true;
+        subscribeButton.textContent = 'جارٍ الاشتراك...';
 
-  // دالة للتحقق من صحة البريد الإلكتروني
-  function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
+        // الحصول على البريد الإلكتروني من الحقل
+        const email = emailInput.value;
 
-  // مستمع الحدث عند تقديم النموذج
-  form.addEventListener("submit", function(event) {
-    event.preventDefault(); // منع الإرسال الافتراضي للنموذج
+        // التحقق من صحة البريد الإلكتروني
+        if (!validateEmail(email)) {
+            alert('البريد الإلكتروني غير صالح.');
+            subscribeButton.disabled = false;
+            subscribeButton.textContent = 'اشترك';
+            return;
+        }
 
-    // تعطيل الزر أثناء الإرسال وتغيير النص
-    subscribeButton.disabled = true;
-    subscribeButton.textContent = "جارٍ الاشتراك...";
+        // إرسال البيانات إلى الخادم
+        fetch('/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('تم الاشتراك بنجاح!');
+            // إعادة تفعيل الزر وإعادة النص
+            subscribeButton.disabled = false;
+            subscribeButton.textContent = 'اشترك';
+            // يمكنك إضافة منطق إضافي هنا بعد الاشتراك الناجح
+        })
+        .catch(error => {
+            console.error('حدث خطأ:', error);
+            alert('حدث خطأ أثناء الاشتراك.');
+            subscribeButton.disabled = false;
+            subscribeButton.textContent = 'اشترك';
+        });
+    });
 
-    // الحصول على البيانات من الحقول
-    const name = document.getElementById("name").value;
-    const email = emailInput.value;
-    const password = document.getElementById("password").value;
-
-    // التحقق من ملء جميع الحقول
-    if (!name || !email || !password) {
-      alert("الرجاء ملء جميع الحقول!");
-      subscribeButton.disabled = false;
-      subscribeButton.textContent = "تسجيل";
-      return;
+    // دالة التحقق من صحة البريد الإلكتروني
+    function validateEmail(email) {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailPattern.test(email);
     }
-
-    // التحقق من صحة البريد الإلكتروني
-    if (!validateEmail(email)) {
-      alert("البريد الإلكتروني غير صالح.");
-      subscribeButton.disabled = false;
-      subscribeButton.textContent = "تسجيل";
-      return;
-    }
-
-    console.log("البيانات المرسلة:", { name, email, password });
-
-    // عرض المؤشر أثناء عملية الإرسال
-    document.getElementById("loader").style.display = "block";
-
-    // إعداد البيانات بتنسيق URL-encoded
-    const formData = new URLSearchParams();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-
-    // إرسال البيانات إلى الخادم عبر المسار /subscribe
-    fetch("/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: formData.toString()
-    })
-      .then(response => response.text())  // نتوقع استجابة نصية من الخادم
-      .then(data => {
-        document.getElementById("loader").style.display = "none";
-        alert("تم الاشتراك بنجاح!");
-        subscribeButton.disabled = false;
-        subscribeButton.textContent = "تسجيل";
-        // إعادة التوجيه إلى صفحة التفعيل بعد النجاح
-        window.location.href = "/activate-info.html";
-      })
-      .catch(error => {
-        console.error("حدث خطأ:", error);
-        alert("حدث خطأ أثناء الاشتراك.");
-        subscribeButton.disabled = false;
-        subscribeButton.textContent = "تسجيل";
-        document.getElementById("loader").style.display = "none";
-      });
-  });
-
-  // تعيين الدوال للكائن window إذا احتجت استخدامها من عناصر HTML مباشرة
-  window.togglePassword = togglePassword;
-  window.toggleSUBSCRIBEButton = toggleSUBSCRIBEButton;
 });
