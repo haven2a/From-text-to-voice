@@ -6,14 +6,14 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 // إعداد الاتصال بـ Supabase باستخدام المتغيرات من ملف .env
 const supabase = createClient(
   process.env.SUPABASE_URL,  // من ملف .env
   process.env.SUPABASE_KEY   // من ملف .env
 );
-
-const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -77,7 +77,7 @@ app.post('/api/subscribe', async (req, res) => {
       throw error;
     }
 
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       console.log("⚠️ البريد الإلكتروني مسجل مسبقًا!");
       return res.status(400).json({ message: '⚠️ البريد الإلكتروني مسجل مسبقًا.' });
     }
@@ -106,7 +106,7 @@ app.post('/api/subscribe', async (req, res) => {
 
     transporter.sendMail(mailOptions, (err, info) => {
       if (err) {
-        console.log("❌ حدث خطأ أثناء إرسال البريد:", err);
+        console.error("❌ حدث خطأ أثناء إرسال البريد:", err);
       } else {
         console.log('✅ تم إرسال البريد بنجاح:', info.response);
       }
@@ -119,6 +119,16 @@ app.post('/api/subscribe', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ الخادم يعمل على البورت ${PORT}`);
-});
+/*
+  إذا كنت تنشر التطبيق على Vercel أو أي منصة تستخدم دوال Serverless،
+  فيجب تصدير التطبيق كدالة بدلاً من استخدام app.listen.
+  يمكن استخدام مكتبة serverless-http لهذا الغرض.
+*/
+if (process.env.VERCEL) {
+  const serverless = require('serverless-http');
+  module.exports = serverless(app);
+} else {
+  app.listen(PORT, () => {
+    console.log(`✅ الخادم يعمل على البورت ${PORT}`);
+  });
+}
