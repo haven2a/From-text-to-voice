@@ -6,10 +6,10 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
-// إعداد الاتصال بـ Supabase
+// إعداد الاتصال بـ Supabase باستخدام المتغيرات من ملف .env
 const supabase = createClient(
-    process.env.SUPABASE_URL,  // من .env
-    process.env.SUPABASE_KEY   // من .env
+    process.env.SUPABASE_URL,   // من .env
+    process.env.SUPABASE_KEY    // من .env
 );
 
 const app = express();
@@ -19,32 +19,40 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// إعداد البريد الإلكتروني
+// إضافة رؤوس Content Security Policy للسماح بتحميل الأنماط من Google Fonts
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'");
+    next();
+});
+
+// إعداد البريد الإلكتروني باستخدام Nodemailer (باستخدام Gmail كمثال)
 console.log("📧 إعداد خدمة البريد الإلكتروني...");
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER,    // البريد الإلكتروني من .env
+        pass: process.env.EMAIL_PASS     // كلمة المرور من .env
     }
 });
 console.log("✅ تم إعداد خدمة البريد الإلكتروني!");
 
-// المسار الرئيسي
+// المسار الرئيسي - تأكد من وجود index.html في نفس المجلد
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// تسجيل المستخدم
+// تسجيل المستخدم عبر نقطة النهاية /api/subscribe
 app.post('/api/subscribe', async (req, res) => {
     console.log("📩 استلام طلب تسجيل:", req.body);
     const { name, email, password } = req.body;
 
+    // التحقق من وجود جميع الحقول المطلوبة
     if (!name || !email || !password) {
         console.log("⚠️ جميع الحقول مطلوبة!");
         return res.status(400).json({ message: '⚠️ جميع الحقول مطلوبة!' });
     }
 
+    // التحقق من صحة البريد الإلكتروني باستخدام تعبير منتظم
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailRegex.test(email)) {
         console.log("⚠️ البريد الإلكتروني غير صالح!");
@@ -105,14 +113,13 @@ app.post('/api/subscribe', async (req, res) => {
         });
 
         res.status(201).json({ message: '✅ تم التسجيل بنجاح وتم إرسال بريد التأكيد!' });
-
     } catch (error) {
         console.error("❌ خطأ أثناء التسجيل:", error);
         res.status(500).json({ message: '❌ حدث خطأ أثناء التسجيل.', error: error.message });
     }
 });
 
-// تشغيل السيرفر
+// تشغيل الخادم
 app.listen(PORT, () => {
     console.log(`🚀 السيرفر يعمل على المنفذ ${PORT}`);
 });
