@@ -125,7 +125,7 @@
 
     <div class="register-box">
         <h2>تسجيل جديد</h2>
-        <form id="registerForm" action="/subscribe" method="POST">
+        <form id="registerForm" action="/api/subscribe" method="POST">
             <input type="text" placeholder="الاسم الكامل" id="name" required autocomplete="off">
             <input type="email" placeholder="البريد الإلكتروني" id="email" required autocomplete="off">
             
@@ -145,22 +145,19 @@
     </div>
 
     <script>
-        // دالة لتغيير نوع كلمة المرور بين النص وكلمة مرور
         function togglePassword() {
             var passwordField = document.getElementById("password");
             passwordField.type = passwordField.type === "password" ? "text" : "password";
         }
 
-        // تفعيل أو تعطيل زر التسجيل بناءً على حالة الموافقة على الشروط
         function toggleRegisterButton() {
             var checkbox = document.getElementById("termsCheckbox");
             var button = document.getElementById("registerButton");
-            button.disabled = !checkbox.checked;  // إذا تم تفعيل المربع، سيتم تفعيل الزر
+            button.disabled = !checkbox.checked;
         }
 
-        // دالة لتسجيل المستخدم
         async function registerUser(event) {
-            event.preventDefault();  // منع إرسال النموذج الافتراضي
+            event.preventDefault();
 
             const username = document.getElementById("name").value;
             const email = document.getElementById("email").value;
@@ -171,9 +168,8 @@
                 return;
             }
 
-            console.log('البيانات المرسلة:', { name: username, email, password }); // إضافة سجل لعرض البيانات المرسلة
+            console.log('البيانات المرسلة:', { name: username, email, password });
 
-            // إظهار اللودر أثناء التسجيل
             document.getElementById("loader").style.display = 'block';
 
             try {
@@ -185,11 +181,10 @@
 
                 const result = await response.json();
 
-                // إخفاء اللودر بعد إتمام التسجيل
                 document.getElementById("loader").style.display = 'none';
 
                 if (response.ok) {
-                    alert('تم التسجيل بنجاح! تابع بريدك الإلكتروني للتعرف على صفحة تفعيل التسجيل.');
+                    alert('تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.');
                     window.location.href = '/activate-info.html';
                 } else {
                     alert(result.message);
@@ -201,9 +196,7 @@
             }
         }
 
-        // ربط دالة التسجيل بالنموذج
         document.getElementById("registerForm").addEventListener("submit", registerUser);
     </script>
-
 </body>
 </html>
