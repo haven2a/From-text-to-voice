@@ -85,42 +85,40 @@ app.post('/api/subscribe', async (req, res) => {
     console.log("🔑 تشفير كلمة المرور...");
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // إدخال المستخدم في قاعدة البيانات
-    const { data: newUser, error: insertError } = await supabase
+    // إضافة المستخدم إلى قاعدة البيانات
+    const { data: insertedUser, error: insertError } = await supabase
       .from('users')
-      .insert([
-        {
-          name,
-          email,
-          password: hashedPassword,
-        }
-      ]);
+      .insert([{ name, email, password: hashedPassword }]);
 
     if (insertError) {
       throw insertError;
     }
 
-    console.log("✅ تم تسجيل المستخدم بنجاح!");
+    console.log("✅ تم إضافة المستخدم إلى قاعدة البيانات");
 
-    // إرسال بريد إلكتروني تأكيد
+    // إرسال بريد إلكتروني لتأكيد التسجيل
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'تأكيد التسجيل',
-      text: `مرحبًا ${name}, تم تسجيلك بنجاح في تطبيقنا!`,
+      text: 'شكرًا لتسجيلك معنا! يرجى تأكيد بريدك الإلكتروني.'
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("📧 تم إرسال البريد الإلكتروني!");
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log("❌ حدث خطأ أثناء إرسال البريد:", err);
+      } else {
+        console.log('✅ تم إرسال البريد بنجاح:', info.response);
+      }
+    });
 
-    res.status(200).json({ message: 'تم التسجيل بنجاح!' });
+    return res.status(200).json({ message: '✅ تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.' });
   } catch (error) {
-    console.error("⚠️ حدث خطأ أثناء التسجيل:", error.message);
-    res.status(500).json({ message: 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.' });
+    console.error("❌ حدث خطأ:", error);
+    return res.status(500).json({ message: '❌ حدث خطأ أثناء التسجيل، يرجى المحاولة لاحقًا.' });
   }
 });
 
-// تشغيل الخادم
 app.listen(PORT, () => {
-  console.log(`🚀 الخادم يعمل على المنفذ ${PORT}`);
+  console.log(`✅ الخادم يعمل على البورت ${PORT}`);
 });
