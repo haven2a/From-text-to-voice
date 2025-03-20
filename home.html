@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://code.responsivevoice.org;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>from-text-to-voice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=gz5UPOSm"></script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      background-color: #282c34;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 80%;
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .language-selector {
+      font-size: 1.5em;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f4b400;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .language-selector:hover {
+      background-color: #ffcc00;
+    }
+
+    .logo img {
+      width: 150px;
+    }
+
+    .member-area {
+      font-size: 1.5em;
+      background-color: #34a853;
+      padding: 10px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    .member-area:hover {
+      background-color: #2d8f42;
+    }
+
+    .text-area {
+      width: 95%;
+      height: 500px;
+      font-size: 1.7em;
+      border: 3px solid #f4b400;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 20px;
+      background-color: white;
+      color: black;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .text-area:hover {
+      transform: scale(1.02);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .control-button {
+      font-size: 1.2em;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out, background 0.3s;
+      color: white;
+      border: none;
+      min-width: 150px;
+    }
+
+    .control-button:hover {
+      transform: scale(1.1);
+    }
+
+    .play { background-color: #34a853; }
+    .stop { background-color: #d32f2f; }
+    .speed { background-color: #f4b400; }
+    .gender { background-color: #4285f4; }
+    .read-lang { background-color: #ff5722; }
+    .upload { background-color: #673ab7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="language-selector" onclick="changeLanguage()">تغيير اللغة</div>
+      <div class="logo"><img src="logo.png" alt="Logo"></div>
+      <a href="member_area.php" class="member-area">صفحة الأعضاء</a>
+    </div>
+
+    <textarea class="text-area" id="text-input" placeholder="اكتب النص هنا..."></textarea>
+
+    <div class="controls">
+      <button class="control-button play" onclick="playAudio()">تشغيل الصوت</button>
+      <button class="control-button stop" onclick="stopAudio()">إيقاف الصوت</button>
+      <button class="control-button gender" onclick="changeGender()">تغيير جنس القارئ</button>
+      <button class="control-button read-lang" onclick="changeReadingLanguage()">تغيير لغة القراءة</button>
+      <input type="file" id="file-input" accept=".txt" hidden onchange="uploadTextFile()">
+      <button class="control-button upload" onclick="document.getElementById('file-input').click()">تحميل ملف نصي</button>
+    </div>
+  </div>
+
+  <script>
+    let currentVoice = 'Arabic Male';
+    let language = 'ar';
+
+    function playAudio() {
+      let text = document.getElementById("text-input").value;
+      responsiveVoice.speak(text, currentVoice);
+    }
+
+    function stopAudio() {
+      responsiveVoice.cancel();
+    }
+
+    function changeGender() {
+      currentVoice = currentVoice === 'Arabic Male' ? 'Arabic Female' : 'Arabic Male';
+      alert("تم تغيير جنس القارئ");
+    }
+
+    function changeReadingLanguage() {
+      language = language === 'ar' ? 'en' : 'ar';
+      currentVoice = language === 'ar' ? 'Arabic Male' : 'UK English Male';
+      alert("تم تغيير لغة القراءة");
+    }
+
+    function uploadTextFile() {
+      let file = document.getElementById('file-input').files[0];
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("text-input").value = e.target.result;
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function changeLanguage() {
+      document.documentElement.lang = document.documentElement.lang === 'ar' ? 'en' : 'ar';
+      alert('تم تغيير لغة التطبيق');
+    }
+  </script>
+</body>
+</html>
